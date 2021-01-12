@@ -1,16 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campgrounds Index</title>
-</head>
-<body>
-    <h1>Campgrounds Index</h1>
-    <ul>
+<% layout("layouts/boilerplate") %>
+    <div class="row">
+        <h3 class="text-center my-4">All Campgrounds</h3>
         <% for(let campground of campgrounds) { %>
-            <li><a href="/campgrounds/<%= campground._id %>"><%= campground.title %></a></li>
+        <div class="col-12 my-2 px-2 pb-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="<%= campground.image %>" class="img-fluid" alt="<%= campground.title %>'s Image"  />
+                </div>
+                <div class="col-md-8">
+                    <h5 class="mb-2"><%= campground.title %></h5>
+                    <p class="my-1"><%= campground.location %></p>
+                    <p class="my-1"><%= campground.description %></p>
+                    <a href="/campgrounds/<%= campground._id %>" class="btn btn-primary">Read More</a>
+                </div>
+            </div>
+        </div>
         <% } %>
-    </ul>
-</body>
-</html>
+    </div>
+        
