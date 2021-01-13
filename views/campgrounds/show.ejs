@@ -1,13 +1,4 @@
 <% layout("layouts/boilerplate") %>
-    <!-- <h1><%= campground.title %></h1>
-    <p><%= campground.location %></p>
-    <img src="<%= campground.image %>" alt="<%= campground.title %>'s image" />
-    <p>Price: <%= campground.price %></p>
-    <a href="/campgrounds/<%= campground._id %>/edit">Edit</a>
-    <a href="/campgrounds">All Campgrounds</a>
-    <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
-        <button>Delete</button>
-    </form> -->
 
 
 <div class="row justify-content-center">
@@ -31,15 +22,17 @@
                 </li>
             </ul>
         </div>
+    </div>
+    <div class="col-md-8 col-lg-6">
         <div class="my-4">
             <h5 class="mb-3">Create A Review</h5>
             <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="needs-validation" novalidate>
                 <div class="mb-2">
-                    <label for="rating">Rating</label>
+                    <label for="rating" class="mb-1">Rating</label>
                     <input type="range" class="form-range" name="review[rating]" id="rating" min="1" max="5" step="1" required />
                 </div>
                 <div class="mb-2">
-                    <label for="text">Text</label>
+                    <label for="text"  class="mb-1">Text</label>
                     <textarea class="form-control" name="review[text]" id="text" cols="30" rows="3" placeholder="Write Review Here" required></textarea>
                     <div class="valid-feedback">
                         Looks good!
