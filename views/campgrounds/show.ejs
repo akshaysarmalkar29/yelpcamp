@@ -31,5 +31,35 @@
                 </li>
             </ul>
         </div>
+        <div class="my-4">
+            <h5 class="mb-3">Create A Review</h5>
+            <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" class="needs-validation" novalidate>
+                <div class="mb-2">
+                    <label for="rating">Rating</label>
+                    <input type="range" class="form-range" name="review[rating]" id="rating" min="1" max="5" step="1" required />
+                </div>
+                <div class="mb-2">
+                    <label for="text">Text</label>
+                    <textarea class="form-control" name="review[text]" id="text" cols="30" rows="3" placeholder="Write Review Here" required></textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
+                </div>
+                <button class="btn btn-success">Submit</button>
+            </form>
+        </div>
+        <div class="reviews-container">
+            <% for (let review of campground.reviews) { %>
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h5>Rating: <%= review.rating %></h5>
+                        <p class="mb-1"><%= review.text %></p>
+                        <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            <% } %>
+        </div>
     </div>
 </div>
