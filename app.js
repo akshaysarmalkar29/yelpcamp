@@ -6,11 +6,15 @@ const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/expressError");
 const session = require("express-session");
+const passport = require("passport");
+const LocalStratergy = require("passport-local");
+const User = require("./models/user");
 const flash = require("connect-flash");
 
 // Routes
 const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
+const indexRoutes = require("./routes/index");
 
 mongoose.connect('mongodb://localhost:27017/yelpcamp', {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -34,17 +38,21 @@ app.use(session({
 }));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStratergy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use(function (req, res, next) {
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     next();
 })
 
-app.get("/", function(req, res) {
-    res.render("index", {pageTitle: "Home"});
-});
-
 // Merge Routes
+app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/reviews", reviewRoutes);
 
