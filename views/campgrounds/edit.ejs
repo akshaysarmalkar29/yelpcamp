@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
         <h2 class="text-center">Edit <%= campground.title %></h2>
         <div class="col-md-8">
-            <form action="/campgrounds" method="POST" class="my-2 needs-validation" novalidate>
+            <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="POST" class="my-2 needs-validation" novalidate enctype="multipart/form-data">
                 <div class="form-group my-2">
                     <label for="title">Title</label>
                     <input type="text" class="form-control" name="campground[title]" value="<%= campground['title'] %>" id="title" placeholder="Enter Title" required />
@@ -25,13 +25,21 @@
                         Looks good!
                       </div>
                 </div>
-                <div class="form-group my-2">
+                <!-- <div class="form-group my-2">
                     <label for="image">Image URL</label>
                     <input type="text" class="form-control" name="campground[image]"  value="<%= campground['image'] %>" id="image" placeholder="Enter Image URL" required />
                     <div class="valid-feedback">
                         Looks good!
                       </div>
+                </div> -->
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="images" accept="image/*" multiple id="inputGroupFile03" aria-describedby="inputGroupFileAddon03" aria-label="Upload">
                 </div>
+                <% campground.images.forEach((img, i) => { %>
+                        <img src="<%= img.thumbnail %>" class="img-thumbnail" />
+                        <input type="checkbox" name="deleteImages[]" id="img-<%=i%>" value="<%= img.filename %>" />
+                        <label for="img-<%=i%>">Delete?</label>
+                <% }); %>   
                 <div class="form-group my-2">
                     <label for="description">Description</label>
                     <textarea name="campground[description]" class="form-control" id="description" cols="30" rows="5" placeholder="Enter Description" required><%=campground['description'] %></textarea>

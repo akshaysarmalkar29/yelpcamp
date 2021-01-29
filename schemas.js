@@ -7,8 +7,9 @@ module.exports = {
             price: Joi.number().required().min(0),
             location: Joi.string().required(),
             description: Joi.string().required(),
-            image: Joi.string().required()
-        }).required()
+            // images: Joi.string().required()
+        }).required(),
+        deleteImages: Joi.array()
     }),
     reviewSchema: Joi.object({
         review: Joi.object({

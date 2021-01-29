@@ -3,7 +3,9 @@ const router = express.Router();
 const Campground = require("../models/campground");
 const catchAsync = require("../utils/catchAsync");
 const {isLoggedIn, validateCampground, isCampgroundOwner} = require("../middlewares");
-
+const {storage, cloudinary} = require("../cloudinary");
+const multer = require("multer");
+const upload = multer({storage});
 
 router.get("/", catchAsync(async function(req, res) {
     const campgrounds = await Campground.find({});
@@ -12,12 +14,15 @@ router.get("/", catchAsync(async function(req, res) {
 
 router.get("/new", isLoggedIn, function(req, res) {
     res.render("campgrounds/new", {pageTitle: "New Campground"});
+    console.log(req.user);
 });
 
-router.post("/", isLoggedIn , validateCampground, catchAsync(async function(req, res) {
+router.post("/", isLoggedIn , upload.array("images", 4) , validateCampground, catchAsync(async function(req, res) {
     const camp = await Campground.create({...req.body.campground});
-    camp.author = req.user;
+    camp.images = req.files.map(el => ({url: el.path, filename: el.filename}));
+    camp.author = req.user._id;
     await camp.save();
+    console.log(camp);
     res.redirect(`/campgrounds/${camp._id}`);
 }));
 
@@ -47,9 +52,15 @@ router.get("/:id/edit", isLoggedIn, isCampgroundOwner ,catchAsync(async function
     res.render("campgrounds/edit", {campground, pageTitle: "Edit Campground"});
 }))
 
-router.put("/:id", isLoggedIn, isCampgroundOwner, validateCampground, catchAsync(async function(req, res) {
+router.put("/:id", isLoggedIn, isCampgroundOwner, upload.array("images", 4), validateCampground, catchAsync(async function(req, res) {
     const {id} = req.params;
-    await Campground.findByIdAndUpdate(id, req.body.campground);
+    const campground = await Campground.findByIdAndUpdate(id, req.body.campground);
+    if(req.body.deleteImages) {
+        for(let val of req.body.deleteImages) {
+            await cloudinary.uploader.destroy(val);
+        }
+        await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } })
+    }
     res.redirect(`/campgrounds/${id}`);
 }))
 
