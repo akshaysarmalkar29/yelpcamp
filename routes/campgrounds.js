@@ -6,6 +6,9 @@ const {isLoggedIn, validateCampground, isCampgroundOwner} = require("../middlewa
 const {storage, cloudinary} = require("../cloudinary");
 const multer = require("multer");
 const upload = multer({storage});
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocodingClient = mbxGeocoding({ accessToken: mapBoxToken });
 
 router.get("/", catchAsync(async function(req, res) {
     const campgrounds = await Campground.find({});
@@ -14,16 +17,23 @@ router.get("/", catchAsync(async function(req, res) {
 
 router.get("/new", isLoggedIn, function(req, res) {
     res.render("campgrounds/new", {pageTitle: "New Campground"});
-    console.log(req.user);
 });
 
 router.post("/", isLoggedIn , upload.array("images", 4) , validateCampground, catchAsync(async function(req, res) {
-    const camp = await Campground.create({...req.body.campground});
-    camp.images = req.files.map(el => ({url: el.path, filename: el.filename}));
-    camp.author = req.user._id;
-    await camp.save();
-    console.log(camp);
-    res.redirect(`/campgrounds/${camp._id}`);
+    const response = await geocodingClient.forwardGeocode({
+        query: req.body.campground.location,
+        limit: 1
+    }).send();
+    console.log(response.body.features[0].geometry);
+    const campground = new Campground(req.body.campground);
+    campground.geometry = response.body.features[0].geometry;
+    // const camp = await Campground.create({...req.body.campground});
+    campground.images = req.files.map(el => ({url: el.path, filename: el.filename}));
+    campground.author = req.user._id;
+    campground.geometry = response.body.features[0].geometry;
+    console.log(campground);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
 }));
 
 router.get("/:id", catchAsync(async function(req, res) {
