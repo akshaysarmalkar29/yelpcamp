@@ -52,6 +52,7 @@ const scriptSrcUrls = [
     "https://cdn.jsdelivr.net",
 ];
 const styleSrcUrls = [
+    "https://fonts.gstatic.com/",
     "https://kit-free.fontawesome.com/",
     "https://stackpath.bootstrapcdn.com/",
     "https://api.mapbox.com/",
