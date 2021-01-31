@@ -1,5 +1,8 @@
 <% layout("layouts/boilerplate") %>
     <div class="row">
+        <div id="map" style="width: 100%; height: 500px;"></div>
+    </div>
+    <div class="row">
         <h3 class="text-center my-4">All Campgrounds</h3>
         <% for(let campground of campgrounds) { %>
         <div class="col-12 my-2 px-2 pb-2">
@@ -18,3 +21,8 @@
         <% } %>
     </div>
         
+
+    <script>
+        const campgrounds = { features: <%- JSON.stringify(campgrounds) %>}
+    </script>
+    <script src="/js/cluster-maps.js"></script>

@@ -49,6 +49,7 @@ router.get("/:id", catchAsync(async function(req, res) {
         req.flash("error", "Campground Unavailable");
         return res.redirect("/campgrounds");
     }
+    console.log(campground);
     res.render("campgrounds/show", {campground, pageTitle: `${campground.title}'s Campground`});
 }))
 
