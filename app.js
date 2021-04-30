@@ -1,4 +1,7 @@
-require('dotenv').config();
+
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
 
 const express = require("express");
 const app = express();
@@ -19,7 +22,8 @@ const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
 const indexRoutes = require("./routes/index");
 
-mongoose.connect('mongodb://localhost:27017/yelpcamp', {useNewUrlParser: true, useUnifiedTopology: true});
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelpcamp';
+mongoose.connect(dbUrl, {useNewUrlParser: true, useUnifiedTopology: true});
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
@@ -81,7 +85,7 @@ app.use(
                 "'self'",
                 "blob:",
                 "data:",
-                "https://res.cloudinary.com/notorious/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
+                "https://res.cloudinary.com/akshay74/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
                 "https://images.unsplash.com/",
             ],
             fontSrc: ["'self'", ...fontSrcUrls],
@@ -117,6 +121,7 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error', { err, pageTitle: "Error Page" })
 })
 
-app.listen(3000, () => {
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
     console.log("Server running on Port 3000");
 })
