@@ -56,6 +56,11 @@ module.exports = {
     campsUpdate: async function(req, res) {
         const {id} = req.params;
         const campground = await Campground.findByIdAndUpdate(id, req.body.campground);
+        const response = await geocodingClient.forwardGeocode({
+            query: req.body.campground.location,
+            limit: 1
+        }).send();
+        campground.geometry = response.body.features[0].geometry;
         if(req.body.deleteImages) {
             for(let val of req.body.deleteImages) {
                 await cloudinary.uploader.destroy(val);
